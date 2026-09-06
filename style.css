@@ -61,7 +61,9 @@ button {
 }
 
 
-/* Header */
+/* =========================
+   HEADER
+========================= */
 
 .site-header {
     background: var(--white);
@@ -83,6 +85,7 @@ button {
 
     font-size: 1.25rem;
     font-weight: 800;
+
     color: var(--dark);
 }
 
@@ -112,7 +115,9 @@ button {
 }
 
 
-/* Hero */
+/* =========================
+   HERO
+========================= */
 
 .hero {
     padding: 90px 0 80px;
@@ -131,6 +136,7 @@ button {
 .hero-content {
     max-width: 760px;
     margin: 0 auto;
+
     text-align: center;
 }
 
@@ -151,8 +157,10 @@ button {
 
 .hero h1 {
     color: var(--dark);
+
     font-size: clamp(2.3rem, 6vw, 4.5rem);
     line-height: 1.05;
+
     letter-spacing: -2px;
 }
 
@@ -162,17 +170,22 @@ button {
 
 .hero p {
     max-width: 650px;
+
     margin: 24px auto 30px;
 
     color: var(--muted);
+
     font-size: 1.05rem;
 }
 
 
-/* Search */
+/* =========================
+   SEARCH
+========================= */
 
 .search-box {
     max-width: 650px;
+
     margin: 0 auto;
 
     display: flex;
@@ -181,6 +194,7 @@ button {
     padding: 8px;
 
     background: var(--white);
+
     border: 1px solid var(--border);
     border-radius: 16px;
 
@@ -198,6 +212,7 @@ button {
     padding: 14px 16px;
 
     color: var(--dark);
+
     background: transparent;
 }
 
@@ -207,6 +222,7 @@ button {
 
 .search-box button {
     border: 0;
+
     border-radius: 11px;
 
     padding: 0 24px;
@@ -221,7 +237,14 @@ button {
 
 .search-box button:hover {
     background: var(--primary-dark);
+
     transform: translateY(-1px);
+}
+
+.search-box button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .search-hint {
@@ -232,10 +255,13 @@ button {
 }
 
 
-/* Loading */
+/* =========================
+   LOADING
+========================= */
 
 .loading-section {
     padding: 70px 0;
+
     text-align: center;
 }
 
@@ -254,13 +280,17 @@ button {
 }
 
 @keyframes spin {
+
     to {
         transform: rotate(360deg);
     }
+
 }
 
 
-/* Error */
+/* =========================
+   ERROR
+========================= */
 
 .error-section {
     padding: 60px 0;
@@ -268,6 +298,7 @@ button {
 
 .error-card {
     max-width: 600px;
+
     margin: auto;
 
     padding: 40px;
@@ -275,6 +306,7 @@ button {
     text-align: center;
 
     background: var(--white);
+
     border: 1px solid #fecaca;
     border-radius: 18px;
 
@@ -300,16 +332,19 @@ button {
 
 .error-card h2 {
     color: var(--dark);
+
     margin-bottom: 8px;
 }
 
 .error-card p {
     color: var(--muted);
+
     margin-bottom: 20px;
 }
 
 .error-card button {
     border: 0;
+
     padding: 11px 20px;
 
     border-radius: 9px;
@@ -321,24 +356,24 @@ button {
 }
 
 
-/* Dashboard */
+/* =========================
+   DASHBOARD
+========================= */
 
 .dashboard-section {
     padding: 60px 0 80px;
 }
 
 
-/* Profile */
+/* =========================
+   PROFILE
+========================= */
 
 .profile-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
-
     padding: 30px;
 
     background: var(--white);
+
     border: 1px solid var(--border);
     border-radius: 20px;
 
@@ -348,6 +383,7 @@ button {
 .profile-main {
     display: flex;
     align-items: center;
+
     gap: 22px;
 
     min-width: 0;
@@ -362,16 +398,19 @@ button {
     object-fit: cover;
 
     border-radius: 50%;
+
     border: 4px solid #dbeafe;
 }
 
 .profile-info h2 {
     color: var(--dark);
+
     font-size: 1.6rem;
 }
 
 .profile-info > p:first-of-type {
     color: var(--primary);
+
     font-weight: 600;
 }
 
@@ -384,34 +423,18 @@ button {
 .profile-meta {
     display: flex;
     flex-wrap: wrap;
+
     gap: 12px 18px;
 
     font-size: 0.85rem;
+
     color: var(--muted);
 }
 
-.profile-button {
-    flex-shrink: 0;
 
-    padding: 12px 18px;
-
-    background: var(--dark);
-    color: white;
-
-    border-radius: 10px;
-
-    font-weight: 700;
-
-    transition: 0.2s ease;
-}
-
-.profile-button:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
-
-/* Section Heading */
+/* =========================
+   SECTION HEADINGS
+========================= */
 
 .section-heading {
     display: flex;
@@ -426,7 +449,9 @@ button {
 
     font-size: 0.75rem;
     font-weight: 800;
+
     text-transform: uppercase;
+
     letter-spacing: 1px;
 }
 
@@ -434,20 +459,26 @@ button {
     margin-top: 4px;
 
     color: var(--dark);
+
     font-size: 1.6rem;
 }
 
 .repository-total {
     color: var(--muted);
+
     font-size: 0.9rem;
 }
 
 
-/* Stats */
+/* =========================
+   STATISTICS
+========================= */
 
 .stats-grid {
     display: grid;
+
     grid-template-columns: repeat(4, 1fr);
+
     gap: 18px;
 }
 
@@ -455,10 +486,12 @@ button {
     padding: 24px;
 
     background: var(--white);
+
     border: 1px solid var(--border);
     border-radius: 16px;
 
-    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.04);
 }
 
 .stat-icon {
@@ -475,20 +508,26 @@ button {
     color: var(--dark);
 
     font-size: 1.7rem;
+
     font-weight: 800;
 }
 
 .stat-label {
     color: var(--muted);
+
     font-size: 0.85rem;
 }
 
 
-/* Repositories */
+/* =========================
+   REPOSITORIES
+========================= */
 
 .repository-grid {
     display: grid;
+
     grid-template-columns: repeat(2, 1fr);
+
     gap: 18px;
 }
 
@@ -501,6 +540,7 @@ button {
     padding: 24px;
 
     background: var(--white);
+
     border: 1px solid var(--border);
     border-radius: 16px;
 
@@ -509,6 +549,7 @@ button {
 
 .repository-card:hover {
     transform: translateY(-3px);
+
     box-shadow: var(--shadow);
 }
 
@@ -516,6 +557,7 @@ button {
     margin-bottom: 8px;
 
     color: var(--dark);
+
     font-size: 1.1rem;
 
     overflow-wrap: anywhere;
@@ -527,6 +569,7 @@ button {
     margin-bottom: 18px;
 
     color: var(--muted);
+
     font-size: 0.9rem;
 }
 
@@ -538,12 +581,14 @@ button {
     color: var(--primary);
 
     font-size: 0.8rem;
+
     font-weight: 700;
 }
 
 .repository-stats {
     display: flex;
     flex-wrap: wrap;
+
     gap: 14px;
 
     margin-bottom: 18px;
@@ -559,11 +604,13 @@ button {
     padding: 9px 14px;
 
     border: 1px solid var(--border);
+
     border-radius: 9px;
 
     color: var(--dark);
 
     font-size: 0.85rem;
+
     font-weight: 700;
 
     transition: 0.2s ease;
@@ -571,11 +618,14 @@ button {
 
 .repository-link:hover {
     border-color: var(--primary);
+
     color: var(--primary);
 }
 
 
-/* Initial */
+/* =========================
+   INITIAL STATE
+========================= */
 
 .initial-section {
     padding: 70px 0;
@@ -591,17 +641,21 @@ button {
     text-align: center;
 
     background: var(--white);
+
     border: 1px dashed #cbd5e1;
+
     border-radius: 18px;
 }
 
 .initial-icon {
     font-size: 2.2rem;
+
     margin-bottom: 12px;
 }
 
 .initial-card h2 {
     color: var(--dark);
+
     margin-bottom: 8px;
 }
 
@@ -610,12 +664,15 @@ button {
 }
 
 
-/* Footer */
+/* =========================
+   FOOTER
+========================= */
 
 .site-footer {
     padding: 35px 0;
 
     background: var(--dark);
+
     color: #cbd5e1;
 }
 
@@ -623,6 +680,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
 }
 
@@ -636,7 +694,12 @@ button {
 
 .footer-links a {
     color: #93c5fd;
+
     font-weight: 700;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
 }
 
 .copyright {
@@ -644,29 +707,23 @@ button {
 }
 
 
-/* Utility */
+/* =========================
+   UTILITY
+========================= */
 
 .hidden {
     display: none !important;
 }
 
 
-/* Responsive */
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media (max-width: 850px) {
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
-    }
-
-    .profile-card {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .profile-button {
-        width: 100%;
-        text-align: center;
     }
 
     .repository-grid {
@@ -675,12 +732,14 @@ button {
 
     .footer-content {
         flex-direction: column;
+
         text-align: center;
     }
 
     .copyright {
         text-align: center;
     }
+
 }
 
 
@@ -708,6 +767,7 @@ button {
 
     .profile-main {
         align-items: flex-start;
+
         flex-direction: column;
     }
 
@@ -718,6 +778,7 @@ button {
 
     .stats-grid {
         grid-template-columns: 1fr 1fr;
+
         gap: 10px;
     }
 
@@ -727,7 +788,10 @@ button {
 
     .section-heading {
         align-items: flex-start;
+
         flex-direction: column;
+
         gap: 8px;
     }
+
 }
