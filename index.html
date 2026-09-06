@@ -4,411 +4,517 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>RepoScope — GitHub Profile Explorer</title>
-    <meta name="description" content="RepoScope is a GitHub profile and repository explorer built with JavaScript and the GitHub REST API.">
+    <title>RepoScope Weather Dashboard</title>
+
+    <meta
+        name="description"
+        content="RepoScope is a real-time weather dashboard using JavaScript Fetch API, async/await and RESTful APIs."
+    >
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header class="header">
-    <div class="container nav">
-        <div class="logo">
-            <span class="logo-icon">⌘</span>
-            <span>RepoScope</span>
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="header">
+        <div class="container nav">
+
+            <div class="logo">
+                <div class="logo-icon">☁</div>
+                <div>
+                    <h2>RepoScope</h2>
+                    <span>Weather Dashboard</span>
+                </div>
+            </div>
+
+            <div class="api-badge">
+                REST API
+            </div>
+
         </div>
-
-        <div class="nav-label">
-            GitHub Explorer
-        </div>
-    </div>
-</header>
+    </header>
 
 
-<main>
+    <!-- =========================
+         HERO / SEARCH
+    ========================== -->
 
-    <!-- HERO / SEARCH -->
     <section class="hero">
+
         <div class="container hero-content">
 
-            <span class="badge">GitHub REST API</span>
+            <span class="badge">
+                REAL-TIME WEATHER
+            </span>
 
             <h1>
-                Explore GitHub
-                <span>Profiles & Repositories</span>
+                Explore Weather
+                <span>Anywhere in the World</span>
             </h1>
 
             <p>
-                Search any public GitHub username and explore profile
-                information, statistics, and repositories in one place.
+                Search for any city and get live weather information
+                including temperature, humidity, wind speed and more.
             </p>
 
+
             <form id="searchForm" class="search-box">
+
                 <input
                     type="text"
-                    id="usernameInput"
-                    placeholder="Enter GitHub username..."
+                    id="cityInput"
+                    placeholder="Enter city name..."
                     autocomplete="off"
                     required
                 >
 
-                <button type="submit" id="searchButton">
+                <button
+                    type="submit"
+                    id="searchButton"
+                >
                     Search
                 </button>
+
             </form>
 
-            <div id="errorMessage" class="error-message"></div>
+
+            <div
+                id="errorMessage"
+                class="error-message hidden"
+            ></div>
 
         </div>
+
     </section>
 
 
-    <!-- LOADING -->
-    <section id="loading" class="loading-section hidden">
+    <!-- =========================
+         LOADING
+    ========================== -->
+
+    <section
+        id="loading"
+        class="loading-section hidden"
+    >
+
         <div class="loader"></div>
-        <p>Fetching GitHub data...</p>
+
+        <p>
+            Fetching live weather data...
+        </p>
+
     </section>
 
 
-    <!-- RESULTS -->
-    <section id="results" class="results-section hidden">
+    <!-- =========================
+         WEATHER DASHBOARD
+    ========================== -->
+
+    <main
+        id="weatherDashboard"
+        class="dashboard hidden"
+    >
 
         <div class="container">
 
-            <!-- PROFILE -->
-            <div class="section-heading">
-                <span>01</span>
-                <h2>Profile Information</h2>
+
+            <!-- LOCATION -->
+
+            <div class="location-header">
+
+                <div>
+
+                    <span class="section-number">
+                        LIVE LOCATION
+                    </span>
+
+                    <h2 id="cityName">
+                        -
+                    </h2>
+
+                    <p id="locationDetails">
+                        -
+                    </p>
+
+                </div>
+
+                <div class="current-date">
+                    <span id="currentDate">
+                        -
+                    </span>
+
+                    <span id="currentTime">
+                        -
+                    </span>
+                </div>
+
             </div>
 
-            <div class="profile-card">
 
-                <div class="profile-main">
+            <!-- MAIN WEATHER CARD -->
 
-                    <img
-                        id="avatar"
-                        class="avatar"
-                        src=""
-                        alt="GitHub profile avatar"
+            <section class="main-weather-card">
+
+                <div class="weather-icon-box">
+
+                    <span id="weatherIcon">
+                        ☀️
+                    </span>
+
+                </div>
+
+
+                <div class="main-temperature">
+
+                    <span
+                        id="temperature"
+                        class="temperature"
                     >
+                        --
+                    </span>
 
-                    <div class="profile-info">
-
-                        <h2 id="profileName">-</h2>
-
-                        <p id="profileUsername" class="username">
-                            @username
-                        </p>
-
-                        <p id="profileBio" class="bio">
-                            No bio available.
-                        </p>
-
-                    </div>
+                    <span class="degree">
+                        °C
+                    </span>
 
                 </div>
 
 
-                <div class="profile-details">
+                <div class="weather-condition">
 
-                    <div class="detail-item">
-                        <span class="detail-label">Location</span>
-                        <strong id="profileLocation">Not available</strong>
-                    </div>
+                    <h3 id="weatherDescription">
+                        -
+                    </h3>
 
-                    <div class="detail-item">
-                        <span class="detail-label">Company</span>
-                        <strong id="profileCompany">Not available</strong>
-                    </div>
-
-                    <div class="detail-item">
-                        <span class="detail-label">Joined</span>
-                        <strong id="profileJoined">-</strong>
-                    </div>
+                    <p>
+                        Feels like
+                        <strong id="feelsLike">
+                            --°C
+                        </strong>
+                    </p>
 
                 </div>
 
+            </section>
 
-                <div class="profile-stats">
 
-                    <div class="stat-card">
-                        <span class="stat-number" id="followers">
-                            0
-                        </span>
-                        <span class="stat-label">
-                            Followers
-                        </span>
-                    </div>
+            <!-- WEATHER METRICS -->
 
-                    <div class="stat-card">
-                        <span class="stat-number" id="following">
-                            0
-                        </span>
-                        <span class="stat-label">
-                            Following
-                        </span>
-                    </div>
+            <div class="section-title">
 
-                    <div class="stat-card">
-                        <span class="stat-number" id="publicRepos">
-                            0
-                        </span>
-                        <span class="stat-label">
-                            Public Repositories
-                        </span>
-                    </div>
+                <span>
+                    01
+                </span>
 
-                    <div class="stat-card">
-                        <span class="stat-number" id="publicGists">
-                            0
-                        </span>
-                        <span class="stat-label">
-                            Public Gists
-                        </span>
-                    </div>
-
-                </div>
+                <h2>
+                    Weather Metrics
+                </h2>
 
             </div>
 
 
-            <!-- GITHUB STATISTICS -->
-            <div class="section-heading">
-                <span>02</span>
-                <h2>GitHub Statistics</h2>
-            </div>
-
-            <div class="statistics-grid">
-
-                <div class="statistics-card">
-                    <div class="statistics-icon">📁</div>
-                    <span>Total Repositories</span>
-                    <strong id="statRepos">0</strong>
-                </div>
-
-                <div class="statistics-card">
-                    <div class="statistics-icon">⭐</div>
-                    <span>Total Stars</span>
-                    <strong id="statStars">0</strong>
-                </div>
-
-                <div class="statistics-card">
-                    <div class="statistics-icon">🍴</div>
-                    <span>Total Forks</span>
-                    <strong id="statForks">0</strong>
-                </div>
-
-                <div class="statistics-card">
-                    <div class="statistics-icon">👥</div>
-                    <span>Followers</span>
-                    <strong id="statFollowers">0</strong>
-                </div>
-
-            </div>
+            <section class="metrics-grid">
 
 
-            <!-- REPOSITORIES -->
-            <div class="section-heading">
-                <span>03</span>
-                <h2>Public Repositories</h2>
-            </div>
+                <!-- Temperature -->
 
-            <div id="repositories" class="repositories-grid"></div>
+                <article class="metric-card">
 
-
-            <!-- MY PROJECTS -->
-            <div class="section-heading projects-heading">
-                <span>04</span>
-                <h2>My Projects</h2>
-            </div>
-
-            <div class="projects-grid">
-
-                <!-- EngiCalc -->
-                <article class="project-card">
-
-                    <div class="project-number">
-                        01
+                    <div class="metric-icon">
+                        🌡️
                     </div>
 
-                    <div class="project-content">
+                    <div>
 
-                        <span class="project-type">
-                            Web Application
+                        <span class="metric-label">
+                            Temperature
                         </span>
 
-                        <h3>EngiCalc</h3>
-
-                        <p>
-                            A web-based engineering calculator platform
-                            designed to make technical calculations and
-                            engineering formula reference faster and easier
-                            for students.
-                        </p>
-
-                        <div class="project-tech">
-                            <span>HTML</span>
-                            <span>CSS</span>
-                            <span>JavaScript</span>
-                        </div>
-
-                        <div class="project-actions">
-
-                            <a
-                                href="https://ayushchatterjeesource.github.io/EngiCalc/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="project-btn primary-btn"
-                            >
-                                Visit Project
-                            </a>
-
-                            <!-- Replace # with your EngiCalc GitHub repository URL -->
-                            <a
-                                href="#"
-                                class="project-btn secondary-btn"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onclick="return checkSourceLink(this);"
-                            >
-                                Source Code
-                            </a>
-
-                        </div>
+                        <strong id="metricTemperature">
+                            --°C
+                        </strong>
 
                     </div>
+
                 </article>
 
 
-                <!-- EarthPulse -->
-                <article class="project-card">
+                <!-- Humidity -->
 
-                    <div class="project-number">
-                        02
+                <article class="metric-card">
+
+                    <div class="metric-icon">
+                        💧
                     </div>
 
-                    <div class="project-content">
+                    <div>
 
-                        <span class="project-type">
-                            Web Platform
+                        <span class="metric-label">
+                            Humidity
                         </span>
 
-                        <h3>EarthPulse</h3>
-
-                        <p>
-                            A web-based environmental monitoring platform
-                            providing weather, air quality, location-based
-                            information, interactive maps, and environmental
-                            updates.
-                        </p>
-
-                        <div class="project-tech">
-                            <span>HTML</span>
-                            <span>CSS</span>
-                            <span>JavaScript</span>
-                            <span>API</span>
-                        </div>
-
-                        <div class="project-actions">
-
-                            <a
-                                href="https://ayushchatterjeesource.github.io/EarthPulse/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="project-btn primary-btn"
-                            >
-                                Visit Project
-                            </a>
-
-                        </div>
+                        <strong id="humidity">
+                            --%
+                        </strong>
 
                     </div>
+
                 </article>
 
 
-                <!-- EngiCalc 2.0 -->
-                <article class="project-card">
+                <!-- Wind -->
 
-                    <div class="project-number">
-                        03
+                <article class="metric-card">
+
+                    <div class="metric-icon">
+                        💨
                     </div>
 
-                    <div class="project-content">
+                    <div>
 
-                        <span class="project-type">
-                            Web Application
+                        <span class="metric-label">
+                            Wind Speed
                         </span>
 
-                        <h3>EngiCalc 2.0</h3>
-
-                        <p>
-                            A comprehensive engineering calculator platform
-                            featuring scientific, matrix, vector, complex
-                            number, Ohm's Law, Kirchhoff's Laws, projectile,
-                            unit conversion, and statistics tools.
-                        </p>
-
-                        <div class="project-tech">
-                            <span>HTML</span>
-                            <span>CSS</span>
-                            <span>JavaScript</span>
-                        </div>
-
-                        <div class="project-actions">
-
-                            <a
-                                href="https://ayushchatterjeesource.github.io/EngiCalc-2.0/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="project-btn primary-btn"
-                            >
-                                Visit Project
-                            </a>
-
-                        </div>
+                        <strong id="windSpeed">
+                            -- km/h
+                        </strong>
 
                     </div>
+
                 </article>
 
 
-                <!-- SnakeRush -->
-                <article class="project-card">
+                <!-- Pressure -->
 
-                    <div class="project-number">
-                        04
+                <article class="metric-card">
+
+                    <div class="metric-icon">
+                        🧭
                     </div>
 
-                    <div class="project-content">
+                    <div>
 
-                        <span class="project-type">
-                            Gaming Platform
+                        <span class="metric-label">
+                            Pressure
                         </span>
 
-                        <h3>SnakeRush</h3>
+                        <strong id="pressure">
+                            -- hPa
+                        </strong>
 
-                        <p>
-                            A modern browser-based arcade game inspired by
-                            the classic Snake experience, with responsive
-                            controls and a mobile-friendly interface.
-                        </p>
+                    </div>
 
-                        <div class="project-tech">
-                            <span>HTML</span>
-                            <span>CSS</span>
-                            <span>JavaScript</span>
-                            <span>Game</span>
-                        </div>
+                </article>
 
-                        <div class="project-actions">
 
-                            <a
-                                href="https://ayushchatterjeesource.github.io/SnakeRush/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="project-btn primary-btn"
-                            >
-                                Visit Project
-                            </a>
+                <!-- Visibility -->
 
-                            <!-- Replace # with your SnakeRush GitHub repository
+                <article class="metric-card">
+
+                    <div class="metric-icon">
+                        👁️
+                    </div>
+
+                    <div>
+
+                        <span class="metric-label">
+                            Visibility
+                        </span>
+
+                        <strong id="visibility">
+                            -- km
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Cloud -->
+
+                <article class="metric-card">
+
+                    <div class="metric-icon">
+                        ☁️
+                    </div>
+
+                    <div>
+
+                        <span class="metric-label">
+                            Cloud Cover
+                        </span>
+
+                        <strong id="cloudCover">
+                            --%
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+            </section>
+
+
+            <!-- ADDITIONAL INFORMATION -->
+
+            <div class="section-title">
+
+                <span>
+                    02
+                </span>
+
+                <h2>
+                    Additional Information
+                </h2>
+
+            </div>
+
+
+            <section class="additional-grid">
+
+                <div class="info-card">
+
+                    <span>
+                        Wind Direction
+                    </span>
+
+                    <strong id="windDirection">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        Sunrise
+                    </span>
+
+                    <strong id="sunrise">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        Sunset
+                    </span>
+
+                    <strong id="sunset">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        Weather Code
+                    </span>
+
+                    <strong id="weatherCode">
+                        -
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- API INFORMATION -->
+
+            <div class="api-info">
+
+                <div>
+                    <strong>
+                        Data Source
+                    </strong>
+
+                    <p>
+                        Open-Meteo REST API
+                    </p>
+                </div>
+
+                <div>
+                    <strong>
+                        Technology
+                    </strong>
+
+                    <p>
+                        Fetch API + async/await + JSON
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="site-footer">
+
+        <div class="container footer-content">
+
+            <div class="footer-brand">
+
+                <h3>
+                    RepoScope
+                </h3>
+
+                <p>
+                    Real-Time Weather Dashboard
+                </p>
+
+            </div>
+
+
+            <div class="footer-center">
+
+                <p>
+                    This website is made by Ayush Chatterjee
+                </p>
+
+                <p>
+                    © 2026. All rights reserved.
+                </p>
+
+            </div>
+
+
+            <div class="footer-link">
+
+                <a
+                    href="https://www.linkedin.com/in/ayush-chatterjee-784559308"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    LinkedIn
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
