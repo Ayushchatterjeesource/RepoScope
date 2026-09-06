@@ -4,399 +4,411 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="description"
-        content="RepoScope - Explore GitHub profiles and repositories using the GitHub REST API."
-    >
-
-    <title>RepoScope — GitHub Explorer</title>
+    <title>RepoScope — GitHub Profile Explorer</title>
+    <meta name="description" content="RepoScope is a GitHub profile and repository explorer built with JavaScript and the GitHub REST API.">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- Header -->
-    <header class="site-header">
-        <div class="container header-content">
-
-            <a href="#" class="logo">
-                <span class="logo-icon">⌘</span>
-                <span>RepoScope</span>
-            </a>
-
-            <span class="api-status">
-                GitHub API
-            </span>
-
+<header class="header">
+    <div class="container nav">
+        <div class="logo">
+            <span class="logo-icon">⌘</span>
+            <span>RepoScope</span>
         </div>
-    </header>
+
+        <div class="nav-label">
+            GitHub Explorer
+        </div>
+    </div>
+</header>
 
 
-    <main>
+<main>
 
-        <!-- Hero -->
-        <section class="hero">
-            <div class="container">
+    <!-- HERO / SEARCH -->
+    <section class="hero">
+        <div class="container hero-content">
 
-                <div class="hero-content">
+            <span class="badge">GitHub REST API</span>
 
-                    <span class="badge">
-                        GitHub REST API Explorer
-                    </span>
-
-                    <h1>
-                        Explore GitHub<br>
-                        <span>Profiles & Repositories</span>
-                    </h1>
-
-                    <p>
-                        Search for any public GitHub profile and explore
-                        repositories, statistics, followers and more.
-                    </p>
-
-                    <!-- Search -->
-                    <div class="search-box">
-
-                        <input
-                            type="text"
-                            id="usernameInput"
-                            placeholder="Enter GitHub username..."
-                            autocomplete="off"
-                        >
-
-                        <button id="searchBtn">
-                            <span>Search</span>
-                        </button>
-
-                    </div>
-
-                    <p class="search-hint">
-                        Try: <strong>octocat</strong>
-                    </p>
-
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- Loading -->
-        <section
-            id="loadingSection"
-            class="loading-section hidden"
-        >
-
-            <div class="loader"></div>
+            <h1>
+                Explore GitHub
+                <span>Profiles & Repositories</span>
+            </h1>
 
             <p>
-                Fetching GitHub data...
+                Search any public GitHub username and explore profile
+                information, statistics, and repositories in one place.
             </p>
 
-        </section>
+            <form id="searchForm" class="search-box">
+                <input
+                    type="text"
+                    id="usernameInput"
+                    placeholder="Enter GitHub username..."
+                    autocomplete="off"
+                    required
+                >
+
+                <button type="submit" id="searchButton">
+                    Search
+                </button>
+            </form>
+
+            <div id="errorMessage" class="error-message"></div>
+
+        </div>
+    </section>
 
 
-        <!-- Error -->
-        <section
-            id="errorSection"
-            class="error-section hidden"
-        >
+    <!-- LOADING -->
+    <section id="loading" class="loading-section hidden">
+        <div class="loader"></div>
+        <p>Fetching GitHub data...</p>
+    </section>
 
-            <div class="container">
 
-                <div class="error-card">
+    <!-- RESULTS -->
+    <section id="results" class="results-section hidden">
 
-                    <div class="error-icon">
-                        !
+        <div class="container">
+
+            <!-- PROFILE -->
+            <div class="section-heading">
+                <span>01</span>
+                <h2>Profile Information</h2>
+            </div>
+
+            <div class="profile-card">
+
+                <div class="profile-main">
+
+                    <img
+                        id="avatar"
+                        class="avatar"
+                        src=""
+                        alt="GitHub profile avatar"
+                    >
+
+                    <div class="profile-info">
+
+                        <h2 id="profileName">-</h2>
+
+                        <p id="profileUsername" class="username">
+                            @username
+                        </p>
+
+                        <p id="profileBio" class="bio">
+                            No bio available.
+                        </p>
+
                     </div>
 
-                    <h2 id="errorTitle">
-                        Something went wrong
-                    </h2>
+                </div>
 
-                    <p id="errorMessage">
-                        Unable to fetch GitHub data.
-                    </p>
 
-                    <button id="retryBtn">
-                        Try Again
-                    </button>
+                <div class="profile-details">
+
+                    <div class="detail-item">
+                        <span class="detail-label">Location</span>
+                        <strong id="profileLocation">Not available</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Company</span>
+                        <strong id="profileCompany">Not available</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Joined</span>
+                        <strong id="profileJoined">-</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="profile-stats">
+
+                    <div class="stat-card">
+                        <span class="stat-number" id="followers">
+                            0
+                        </span>
+                        <span class="stat-label">
+                            Followers
+                        </span>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-number" id="following">
+                            0
+                        </span>
+                        <span class="stat-label">
+                            Following
+                        </span>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-number" id="publicRepos">
+                            0
+                        </span>
+                        <span class="stat-label">
+                            Public Repositories
+                        </span>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-number" id="publicGists">
+                            0
+                        </span>
+                        <span class="stat-label">
+                            Public Gists
+                        </span>
+                    </div>
 
                 </div>
 
             </div>
 
-        </section>
+
+            <!-- GITHUB STATISTICS -->
+            <div class="section-heading">
+                <span>02</span>
+                <h2>GitHub Statistics</h2>
+            </div>
+
+            <div class="statistics-grid">
+
+                <div class="statistics-card">
+                    <div class="statistics-icon">📁</div>
+                    <span>Total Repositories</span>
+                    <strong id="statRepos">0</strong>
+                </div>
+
+                <div class="statistics-card">
+                    <div class="statistics-icon">⭐</div>
+                    <span>Total Stars</span>
+                    <strong id="statStars">0</strong>
+                </div>
+
+                <div class="statistics-card">
+                    <div class="statistics-icon">🍴</div>
+                    <span>Total Forks</span>
+                    <strong id="statForks">0</strong>
+                </div>
+
+                <div class="statistics-card">
+                    <div class="statistics-icon">👥</div>
+                    <span>Followers</span>
+                    <strong id="statFollowers">0</strong>
+                </div>
+
+            </div>
 
 
-        <!-- Dashboard -->
-        <section
-            id="dashboardSection"
-            class="dashboard-section hidden"
-        >
+            <!-- REPOSITORIES -->
+            <div class="section-heading">
+                <span>03</span>
+                <h2>Public Repositories</h2>
+            </div>
 
-            <div class="container">
+            <div id="repositories" class="repositories-grid"></div>
 
-                <!-- Profile -->
-                <div class="profile-card">
 
-                    <div class="profile-main">
+            <!-- MY PROJECTS -->
+            <div class="section-heading projects-heading">
+                <span>04</span>
+                <h2>My Projects</h2>
+            </div>
 
-                        <img
-                            id="profileImage"
-                            class="profile-image"
-                            src=""
-                            alt="GitHub profile"
-                        >
+            <div class="projects-grid">
 
-                        <div class="profile-info">
+                <!-- EngiCalc -->
+                <article class="project-card">
 
-                            <h2 id="profileName">
-                                -
-                            </h2>
+                    <div class="project-number">
+                        01
+                    </div>
 
-                            <p id="profileUsername">
-                                @username
-                            </p>
+                    <div class="project-content">
 
-                            <p id="profileBio">
-                                -
-                            </p>
+                        <span class="project-type">
+                            Web Application
+                        </span>
 
-                            <div class="profile-meta">
+                        <h3>EngiCalc</h3>
 
-                                <span id="profileLocation">
-                                    📍 Not available
-                                </span>
+                        <p>
+                            A web-based engineering calculator platform
+                            designed to make technical calculations and
+                            engineering formula reference faster and easier
+                            for students.
+                        </p>
 
-                                <span id="profileCompany">
-                                    🏢 Not available
-                                </span>
+                        <div class="project-tech">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                        </div>
 
-                                <span id="profileJoined">
-                                    📅 -
-                                </span>
+                        <div class="project-actions">
 
-                            </div>
+                            <a
+                                href="https://ayushchatterjeesource.github.io/EngiCalc/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="project-btn primary-btn"
+                            >
+                                Visit Project
+                            </a>
+
+                            <!-- Replace # with your EngiCalc GitHub repository URL -->
+                            <a
+                                href="#"
+                                class="project-btn secondary-btn"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onclick="return checkSourceLink(this);"
+                            >
+                                Source Code
+                            </a>
 
                         </div>
 
                     </div>
+                </article>
 
-                </div>
 
+                <!-- EarthPulse -->
+                <article class="project-card">
 
-                <!-- Statistics -->
-                <div class="section-heading">
-
-                    <div>
-
-                        <span class="section-label">
-                            Overview
-                        </span>
-
-                        <h2>
-                            GitHub Statistics
-                        </h2>
-
+                    <div class="project-number">
+                        02
                     </div>
 
-                </div>
+                    <div class="project-content">
 
-
-                <div class="stats-grid">
-
-                    <div class="stat-card">
-
-                        <span class="stat-icon">
-                            📦
+                        <span class="project-type">
+                            Web Platform
                         </span>
 
-                        <span
-                            class="stat-value"
-                            id="repoCount"
-                        >
-                            0
-                        </span>
+                        <h3>EarthPulse</h3>
 
-                        <span class="stat-label">
-                            Repositories
-                        </span>
+                        <p>
+                            A web-based environmental monitoring platform
+                            providing weather, air quality, location-based
+                            information, interactive maps, and environmental
+                            updates.
+                        </p>
+
+                        <div class="project-tech">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                            <span>API</span>
+                        </div>
+
+                        <div class="project-actions">
+
+                            <a
+                                href="https://ayushchatterjeesource.github.io/EarthPulse/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="project-btn primary-btn"
+                            >
+                                Visit Project
+                            </a>
+
+                        </div>
 
                     </div>
+                </article>
 
 
-                    <div class="stat-card">
+                <!-- EngiCalc 2.0 -->
+                <article class="project-card">
 
-                        <span class="stat-icon">
-                            👥
-                        </span>
-
-                        <span
-                            class="stat-value"
-                            id="followersCount"
-                        >
-                            0
-                        </span>
-
-                        <span class="stat-label">
-                            Followers
-                        </span>
-
+                    <div class="project-number">
+                        03
                     </div>
 
+                    <div class="project-content">
 
-                    <div class="stat-card">
-
-                        <span class="stat-icon">
-                            👤
+                        <span class="project-type">
+                            Web Application
                         </span>
 
-                        <span
-                            class="stat-value"
-                            id="followingCount"
-                        >
-                            0
-                        </span>
+                        <h3>EngiCalc 2.0</h3>
 
-                        <span class="stat-label">
-                            Following
-                        </span>
+                        <p>
+                            A comprehensive engineering calculator platform
+                            featuring scientific, matrix, vector, complex
+                            number, Ohm's Law, Kirchhoff's Laws, projectile,
+                            unit conversion, and statistics tools.
+                        </p>
+
+                        <div class="project-tech">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                        </div>
+
+                        <div class="project-actions">
+
+                            <a
+                                href="https://ayushchatterjeesource.github.io/EngiCalc-2.0/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="project-btn primary-btn"
+                            >
+                                Visit Project
+                            </a>
+
+                        </div>
 
                     </div>
+                </article>
 
 
-                    <div class="stat-card">
+                <!-- SnakeRush -->
+                <article class="project-card">
 
-                        <span class="stat-icon">
-                            ⭐
-                        </span>
-
-                        <span
-                            class="stat-value"
-                            id="starsCount"
-                        >
-                            0
-                        </span>
-
-                        <span class="stat-label">
-                            Total Stars
-                        </span>
-
+                    <div class="project-number">
+                        04
                     </div>
 
-                </div>
+                    <div class="project-content">
 
-
-                <!-- Repositories -->
-                <div class="section-heading repositories-heading">
-
-                    <div>
-
-                        <span class="section-label">
-                            Projects
+                        <span class="project-type">
+                            Gaming Platform
                         </span>
 
-                        <h2>
-                            Public Repositories
-                        </h2>
+                        <h3>SnakeRush</h3>
 
-                    </div>
+                        <p>
+                            A modern browser-based arcade game inspired by
+                            the classic Snake experience, with responsive
+                            controls and a mobile-friendly interface.
+                        </p>
 
-                    <span
-                        id="repositoryTotal"
-                        class="repository-total"
-                    >
-                        0 repositories
-                    </span>
+                        <div class="project-tech">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                            <span>Game</span>
+                        </div>
 
-                </div>
+                        <div class="project-actions">
 
+                            <a
+                                href="https://ayushchatterjeesource.github.io/SnakeRush/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="project-btn primary-btn"
+                            >
+                                Visit Project
+                            </a>
 
-                <div
-                    id="repositoryList"
-                    class="repository-grid"
-                >
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- Initial State -->
-        <section
-            id="initialSection"
-            class="initial-section"
-        >
-
-            <div class="container">
-
-                <div class="initial-card">
-
-                    <div class="initial-icon">
-                        🔎
-                    </div>
-
-                    <h2>
-                        Find a GitHub Profile
-                    </h2>
-
-                    <p>
-                        Enter a GitHub username above to load
-                        real-time profile and repository information.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- Footer -->
-    <footer class="site-footer">
-
-        <div class="container footer-content">
-
-            <div>
-
-                <strong>
-                    RepoScope
-                </strong>
-
-                <p>
-                    GitHub Profile & Repository Explorer
-                </p>
-
-            </div>
-
-
-            <div class="footer-links">
-
-                <a
-                    href="https://www.linkedin.com/in/ayush-chatterjee-784559308"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    LinkedIn
-                </a>
-
-            </div>
-
-
-            <p class="copyright">
-                © 2026. All rights reserved.
-            </p>
-
-        </div>
-
-    </footer>
-
-
-    <script src="script.js"></script>
-
-</body>
-</html>
+                            <!-- Replace # with your SnakeRush GitHub repository
