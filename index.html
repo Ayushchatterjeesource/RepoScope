@@ -1,1 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta
+        name="description"
+        content="RepoScope - Explore GitHub profiles and repositories using the GitHub REST API."
+    >
+
+    <title>RepoScope — GitHub Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="container header-content">
+
+            <a href="#" class="logo">
+                <span class="logo-icon">⌘</span>
+                <span>RepoScope</span>
+            </a>
+
+            <span class="api-status">
+                GitHub API
+            </span>
+
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+
+                <div class="hero-content">
+
+                    <span class="badge">
+                        GitHub REST API Explorer
+                    </span>
+
+                    <h1>
+                        Explore GitHub<br>
+                        <span>Profiles & Repositories</span>
+                    </h1>
+
+                    <p>
+                        Search for any public GitHub profile and explore
+                        repositories, statistics, followers and more.
+                    </p>
+
+                    <!-- Search -->
+                    <div class="search-box">
+
+                        <input
+                            type="text"
+                            id="usernameInput"
+                            placeholder="Enter GitHub username..."
+                            autocomplete="off"
+                        >
+
+                        <button id="searchBtn">
+                            <span>Search</span>
+                        </button>
+
+                    </div>
+
+                    <p class="search-hint">
+                        Try: <strong>octocat</strong>
+                    </p>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- Loading -->
+        <section id="loadingSection" class="loading-section hidden">
+
+            <div class="loader"></div>
+
+            <p>
+                Fetching GitHub data...
+            </p>
+
+        </section>
+
+
+        <!-- Error -->
+        <section id="errorSection" class="error-section hidden">
+
+            <div class="container">
+
+                <div class="error-card">
+
+                    <div class="error-icon">
+                        !
+                    </div>
+
+                    <h2 id="errorTitle">
+                        Something went wrong
+                    </h2>
+
+                    <p id="errorMessage">
+                        Unable to fetch GitHub data.
+                    </p>
+
+                    <button id="retryBtn">
+                        Try Again
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Dashboard -->
+        <section id="dashboardSection" class="dashboard-section hidden">
+
+            <div class="container">
+
+                <!-- Profile -->
+                <div class="profile-card">
+
+                    <div class="profile-main">
+
+                        <img
+                            id="profileImage"
+                            class="profile-image"
+                            src=""
+                            alt="GitHub profile"
+                        >
+
+                        <div class="profile-info">
+
+                            <h2 id="profileName">
+                                -
+                            </h2>
+
+                            <p id="profileUsername">
+                                @username
+                            </p>
+
+                            <p id="profileBio">
+                                -
+                            </p>
+
+                            <div class="profile-meta">
+
+                                <span id="profileLocation">
+                                    📍 Not available
+                                </span>
+
+                                <span id="profileCompany">
+                                    🏢 Not available
+                                </span>
+
+                                <span id="profileJoined">
+                                    📅 -
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <a
+                        id="githubProfileBtn"
+                        class="profile-button"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View GitHub Profile ↗
+                    </a>
+
+                </div>
+
+
+                <!-- Statistics -->
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-label">
+                            Overview
+                        </span>
+
+                        <h2>
+                            GitHub Statistics
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <span class="stat-icon">📦</span>
+                        <span class="stat-value" id="repoCount">0</span>
+                        <span class="stat-label">Repositories</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-icon">👥</span>
+                        <span class="stat-value" id="followersCount">0</span>
+                        <span class="stat-label">Followers</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-icon">👤</span>
+                        <span class="stat-value" id="followingCount">0</span>
+                        <span class="stat-label">Following</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-icon">⭐</span>
+                        <span class="stat-value" id="starsCount">0</span>
+                        <span class="stat-label">Total Stars</span>
+                    </div>
+
+                </div>
+
+
+                <!-- Repositories -->
+                <div class="section-heading repositories-heading">
+
+                    <div>
+                        <span class="section-label">
+                            Projects
+                        </span>
+
+                        <h2>
+                            Public Repositories
+                        </h2>
+                    </div>
+
+                    <span id="repositoryTotal" class="repository-total">
+                        0 repositories
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="repositoryList"
+                    class="repository-grid"
+                >
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Initial State -->
+        <section id="initialSection" class="initial-section">
+
+            <div class="container">
+
+                <div class="initial-card">
+
+                    <div class="initial-icon">
+                        🔎
+                    </div>
+
+                    <h2>
+                        Find a GitHub Profile
+                    </h2>
+
+                    <p>
+                        Enter a GitHub username above to load
+                        real-time profile and repository information.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="site-footer">
+
+        <div class="container footer-content">
+
+            <div>
+                <strong>RepoScope</strong>
+                <p>
+                    GitHub Profile & Repository Explorer
+                </p>
+            </div>
+
+            <div class="footer-links">
+
+                <a
+                    href="https://www.linkedin.com/in/ayush-chatterjee-784559308"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    LinkedIn
+                </a>
+
+            </div>
+
+            <p class="copyright">
+                © 2026. All rights reserved.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
