@@ -1,688 +1,410 @@
-const usernameInput =
-    document.getElementById("usernameInput");
+const API_BASE = "https://api.github.com";
 
-const searchBtn =
-    document.getElementById("searchBtn");
+const searchForm = document.getElementById("searchForm");
+const usernameInput = document.getElementById("usernameInput");
+const searchButton = document.getElementById("searchButton");
 
-const loadingSection =
-    document.getElementById("loadingSection");
+const loading = document.getElementById("loading");
+const results = document.getElementById("results");
+const errorMessage = document.getElementById("errorMessage");
 
-const errorSection =
-    document.getElementById("errorSection");
+const avatar = document.getElementById("avatar");
+const profileName = document.getElementById("profileName");
+const profileUsername = document.getElementById("profileUsername");
+const profileBio = document.getElementById("profileBio");
 
-const dashboardSection =
-    document.getElementById("dashboardSection");
+const profileLocation = document.getElementById("profileLocation");
+const profileCompany = document.getElementById("profileCompany");
+const profileJoined = document.getElementById("profileJoined");
 
-const initialSection =
-    document.getElementById("initialSection");
+const followers = document.getElementById("followers");
+const following = document.getElementById("following");
+const publicRepos = document.getElementById("publicRepos");
+const publicGists = document.getElementById("publicGists");
 
-const errorTitle =
-    document.getElementById("errorTitle");
+const statRepos = document.getElementById("statRepos");
+const statStars = document.getElementById("statStars");
+const statForks = document.getElementById("statForks");
+const statFollowers = document.getElementById("statFollowers");
 
-const errorMessage =
-    document.getElementById("errorMessage");
-
-const retryBtn =
-    document.getElementById("retryBtn");
-
-
-/* Profile */
-
-const profileImage =
-    document.getElementById("profileImage");
-
-const profileName =
-    document.getElementById("profileName");
-
-const profileUsername =
-    document.getElementById("profileUsername");
-
-const profileBio =
-    document.getElementById("profileBio");
-
-const profileLocation =
-    document.getElementById("profileLocation");
-
-const profileCompany =
-    document.getElementById("profileCompany");
-
-const profileJoined =
-    document.getElementById("profileJoined");
+const repositories = document.getElementById("repositories");
 
 
-/* Statistics */
+/* =========================
+   SEARCH FORM
+========================= */
 
-const repoCount =
-    document.getElementById("repoCount");
+searchForm.addEventListener("submit", async function (event) {
 
-const followersCount =
-    document.getElementById("followersCount");
+    event.preventDefault();
 
-const followingCount =
-    document.getElementById("followingCount");
-
-const starsCount =
-    document.getElementById("starsCount");
-
-
-/* Repositories */
-
-const repositoryList =
-    document.getElementById("repositoryList");
-
-const repositoryTotal =
-    document.getElementById("repositoryTotal");
-
-
-let lastUsername = "";
-
-
-/* =========================================
-   FETCH GITHUB PROFILE
-========================================= */
-
-async function fetchGitHubProfile(username) {
-
-    const response = await fetch(
-        `https://api.github.com/users/${encodeURIComponent(username)}`
-    );
-
-    if (!response.ok) {
-
-        if (response.status === 404) {
-
-            throw new Error(
-                "The GitHub username you entered could not be found."
-            );
-
-        }
-
-        if (response.status === 403) {
-
-            throw new Error(
-                "GitHub API rate limit reached. Please try again later."
-            );
-
-        }
-
-        throw new Error(
-            "Unable to retrieve the GitHub profile."
-        );
-    }
-
-    return await response.json();
-}
-
-
-/* =========================================
-   FETCH REPOSITORIES
-========================================= */
-
-async function fetchGitHubRepositories(username) {
-
-    const response = await fetch(
-        `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`
-    );
-
-    if (!response.ok) {
-
-        if (response.status === 403) {
-
-            throw new Error(
-                "GitHub API rate limit reached. Please try again later."
-            );
-
-        }
-
-        throw new Error(
-            "Unable to retrieve the repositories."
-        );
-    }
-
-    return await response.json();
-}
-
-
-/* =========================================
-   MAIN SEARCH
-========================================= */
-
-async function searchGitHub() {
-
-    const username =
-        usernameInput.value.trim();
-
-
-    /* Empty username */
+    const username = usernameInput.value.trim();
 
     if (!username) {
-
-        showError(
-            "Username Required",
-            "Please enter a GitHub username before searching."
-        );
-
+        showError("Please enter a GitHub username.");
         return;
     }
 
+    await searchGitHubUser(username);
+});
 
-    lastUsername = username;
 
-    showLoading();
+/* =========================
+   SEARCH GITHUB USER
+========================= */
 
+async function searchGitHubUser(username) {
+
+    hideError();
+
+    results.classList.add("hidden");
+    loading.classList.remove("hidden");
+
+    searchButton.disabled = true;
+    searchButton.textContent = "Searching...";
 
     try {
 
-        /*
-         * Both API requests are asynchronous.
-         * Promise.all waits for both responses.
-         */
-
-        const [
-            profile,
-            repositories
-        ] = await Promise.all([
-
-            fetchGitHubProfile(username),
-
-            fetchGitHubRepositories(username)
-
-        ]);
-
-
-        renderProfile(profile);
-
-        renderStatistics(
-            profile,
-            repositories
+        const userResponse = await fetch(
+            `${API_BASE}/users/${encodeURIComponent(username)}`
         );
 
-        renderRepositories(
-            repositories
+        if (!userResponse.ok) {
+
+            if (userResponse.status === 404) {
+                throw new Error(
+                    "GitHub username not found. Please check the username and try again."
+                );
+            }
+
+            if (userResponse.status === 403) {
+                throw new Error(
+                    "GitHub API rate limit reached. Please try again later."
+                );
+            }
+
+            throw new Error(
+                "Unable to fetch GitHub profile information."
+            );
+        }
+
+
+        const userData = await userResponse.json();
+
+
+        const reposResponse = await fetch(
+            `${API_BASE}/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`
         );
 
-        showDashboard();
+        if (!reposResponse.ok) {
+
+            if (reposResponse.status === 403) {
+                throw new Error(
+                    "GitHub API rate limit reached while loading repositories."
+                );
+            }
+
+            throw new Error(
+                "Unable to fetch repository information."
+            );
+        }
 
 
-    } catch (error) {
+        const repoData = await reposResponse.json();
 
-        console.error(
-            "GitHub API Error:",
-            error
-        );
+
+        renderProfile(userData);
+        renderStatistics(userData, repoData);
+        renderRepositories(repoData);
+
+
+        results.classList.remove("hidden");
+
+        results.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(error);
 
         showError(
-            "Unable to Load Data",
             error.message ||
             "Something went wrong while fetching GitHub data."
         );
 
     }
 
+    finally {
+
+        loading.classList.add("hidden");
+
+        searchButton.disabled = false;
+        searchButton.textContent = "Search";
+    }
 }
 
 
-/* =========================================
-   PROFILE
-========================================= */
+/* =========================
+   RENDER PROFILE
+========================= */
 
-function renderProfile(profile) {
+function renderProfile(user) {
 
-    profileImage.src =
-        profile.avatar_url;
-
-    profileImage.alt =
-        `${profile.login} GitHub profile`;
-
+    avatar.src = user.avatar_url;
+    avatar.alt = `${user.login} GitHub avatar`;
 
     profileName.textContent =
-        profile.name ||
-        profile.login;
-
+        user.name || user.login;
 
     profileUsername.textContent =
-        `@${profile.login}`;
-
+        `@${user.login}`;
 
     profileBio.textContent =
-        profile.bio ||
-        "No bio available.";
+        user.bio || "No bio available.";
 
 
     profileLocation.textContent =
-        profile.location
-            ? `📍 ${profile.location}`
-            : "📍 Location not available";
-
+        user.location || "Not available";
 
     profileCompany.textContent =
-        profile.company
-            ? `🏢 ${profile.company}`
-            : "🏢 Company not available";
+        user.company || "Not available";
 
 
     profileJoined.textContent =
-        `📅 Joined ${formatDate(
-            profile.created_at
-        )}`;
+        formatDate(user.created_at);
 
+
+    followers.textContent =
+        formatNumber(user.followers);
+
+    following.textContent =
+        formatNumber(user.following);
+
+    publicRepos.textContent =
+        formatNumber(user.public_repos);
+
+    publicGists.textContent =
+        formatNumber(user.public_gists);
 }
 
 
-/* =========================================
-   STATISTICS
-========================================= */
+/* =========================
+   RENDER STATISTICS
+========================= */
 
-function renderStatistics(
-    profile,
-    repositories
-) {
+function renderStatistics(user, repos) {
 
-    repoCount.textContent =
-        formatNumber(
-            profile.public_repos
-        );
+    let totalStars = 0;
+    let totalForks = 0;
 
 
-    followersCount.textContent =
-        formatNumber(
-            profile.followers
-        );
+    repos.forEach(repo => {
+
+        totalStars +=
+            Number(repo.stargazers_count) || 0;
+
+        totalForks +=
+            Number(repo.forks_count) || 0;
+    });
 
 
-    followingCount.textContent =
-        formatNumber(
-            profile.following
-        );
+    statRepos.textContent =
+        formatNumber(user.public_repos);
 
+    statStars.textContent =
+        formatNumber(totalStars);
 
-    const totalStars =
-        repositories.reduce(
-            (total, repository) => {
+    statForks.textContent =
+        formatNumber(totalForks);
 
-                return total +
-                    repository.stargazers_count;
-
-            },
-            0
-        );
-
-
-    starsCount.textContent =
-        formatNumber(
-            totalStars
-        );
-
+    statFollowers.textContent =
+        formatNumber(user.followers);
 }
 
 
-/* =========================================
-   REPOSITORIES
-========================================= */
+/* =========================
+   RENDER REPOSITORIES
+========================= */
 
-function renderRepositories(
-    repositories
-) {
+function renderRepositories(repos) {
 
-    repositoryList.innerHTML = "";
+    repositories.innerHTML = "";
 
 
-    repositoryTotal.textContent =
-        `${repositories.length} ${
-            repositories.length === 1
-                ? "repository"
-                : "repositories"
-        }`;
+    if (!repos.length) {
 
-
-    if (repositories.length === 0) {
-
-        repositoryList.innerHTML = `
-
-            <div class="initial-card">
-
-                <div class="initial-icon">
-                    📦
-                </div>
-
-                <h2>
-                    No Public Repositories
-                </h2>
-
-                <p>
-                    This GitHub profile does not have
-                    any public repositories.
-                </p>
-
+        repositories.innerHTML = `
+            <div class="empty-repositories">
+                This user has no public repositories.
             </div>
-
         `;
 
         return;
     }
 
 
-    repositories.forEach(
-        repository => {
+    repos.forEach(repo => {
 
-            const card =
-                document.createElement(
-                    "article"
-                );
+        const card = document.createElement("article");
+
+        card.className = "repository-card";
 
 
-            card.className =
-                "repository-card";
+        const description =
+            repo.description ||
+            "No description available.";
 
 
-            const description =
-                repository.description ||
-                "No description available.";
+        const language =
+            repo.language ||
+            "Not specified";
 
 
-            const language =
-                repository.language ||
-                "Language not specified.";
+        card.innerHTML = `
 
+            <h3>
+                ${escapeHTML(repo.name)}
+            </h3>
 
-            card.innerHTML = `
+            <p class="repository-description">
+                ${escapeHTML(description)}
+            </p>
 
-                <h3>
-                    ${escapeHTML(
-                        repository.name
-                    )}
-                </h3>
+            <span class="repository-language">
+                ${escapeHTML(language)}
+            </span>
 
+            <div class="repository-meta">
 
-                <p class="repository-description">
-
-                    ${escapeHTML(
-                        description
-                    )}
-
-                </p>
-
-
-                <span class="repository-language">
-
-                    💻
-                    ${escapeHTML(
-                        language
-                    )}
-
+                <span>
+                    ⭐ ${formatNumber(repo.stargazers_count)}
                 </span>
 
+                <span>
+                    🍴 ${formatNumber(repo.forks_count)}
+                </span>
 
-                <div class="repository-stats">
+                <span>
+                    👁 ${formatNumber(repo.watchers_count)}
+                </span>
 
-                    <span>
-                        ⭐
-                        ${formatNumber(
-                            repository.stargazers_count
-                        )}
-                    </span>
+                <span>
+                    Updated ${formatDate(repo.updated_at)}
+                </span>
 
-                    <span>
-                        🍴
-                        ${formatNumber(
-                            repository.forks_count
-                        )}
-                    </span>
+            </div>
 
-                    <span>
-                        👁️
-                        ${formatNumber(
-                            repository.watchers_count
-                        )}
-                    </span>
+            <a
+                href="${repo.html_url}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="repository-link"
+            >
+                View Repository
+            </a>
 
-                    <span>
-                        Updated
-                        ${formatDate(
-                            repository.updated_at
-                        )}
-                    </span>
-
-                </div>
+        `;
 
 
-                <a
-                    class="repository-link"
-                    href="${repository.html_url}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    View Repository ↗
-                </a>
-
-            `;
-
-
-            repositoryList.appendChild(
-                card
-            );
-
-        }
-    );
-
+        repositories.appendChild(card);
+    });
 }
 
 
-/* =========================================
-   LOADING STATE
-========================================= */
-
-function showLoading() {
-
-    initialSection.classList.add(
-        "hidden"
-    );
-
-    dashboardSection.classList.add(
-        "hidden"
-    );
-
-    errorSection.classList.add(
-        "hidden"
-    );
-
-
-    loadingSection.classList.remove(
-        "hidden"
-    );
-
-
-    searchBtn.disabled = true;
-
-
-    searchBtn.querySelector(
-        "span"
-    ).textContent = "Searching...";
-
-}
-
-
-/* =========================================
-   DASHBOARD STATE
-========================================= */
-
-function showDashboard() {
-
-    loadingSection.classList.add(
-        "hidden"
-    );
-
-    errorSection.classList.add(
-        "hidden"
-    );
-
-    initialSection.classList.add(
-        "hidden"
-    );
-
-
-    dashboardSection.classList.remove(
-        "hidden"
-    );
-
-
-    searchBtn.disabled = false;
-
-
-    searchBtn.querySelector(
-        "span"
-    ).textContent = "Search";
-
-}
-
-
-/* =========================================
-   ERROR STATE
-========================================= */
-
-function showError(
-    title,
-    message
-) {
-
-    loadingSection.classList.add(
-        "hidden"
-    );
-
-    dashboardSection.classList.add(
-        "hidden"
-    );
-
-    initialSection.classList.add(
-        "hidden"
-    );
-
-
-    errorSection.classList.remove(
-        "hidden"
-    );
-
-
-    errorTitle.textContent =
-        title;
-
-    errorMessage.textContent =
-        message;
-
-
-    searchBtn.disabled = false;
-
-
-    searchBtn.querySelector(
-        "span"
-    ).textContent = "Search";
-
-}
-
-
-/* =========================================
+/* =========================
    FORMAT NUMBER
-========================================= */
+========================= */
 
 function formatNumber(number) {
 
-    return new Intl.NumberFormat(
-        "en-US"
-    ).format(
-        number || 0
-    );
+    if (number === null || number === undefined) {
+        return "0";
+    }
 
+    return new Intl.NumberFormat("en-US").format(number);
 }
 
 
-/* =========================================
+/* =========================
    FORMAT DATE
-========================================= */
+========================= */
 
-function formatDate(
-    dateString
-) {
+function formatDate(dateString) {
 
     if (!dateString) {
         return "-";
     }
 
-
-    const date =
-        new Date(dateString);
-
+    const date = new Date(dateString);
 
     return date.toLocaleDateString(
         "en-IN",
         {
-            day: "numeric",
+            day: "2-digit",
             month: "short",
             year: "numeric"
         }
     );
-
 }
 
 
-/* =========================================
-   SECURITY
-========================================= */
+/* =========================
+   ERROR HANDLING
+========================= */
+
+function showError(message) {
+
+    errorMessage.textContent = message;
+
+    errorMessage.classList.remove("hidden");
+}
+
+
+function hideError() {
+
+    errorMessage.textContent = "";
+
+    errorMessage.classList.add("hidden");
+}
+
+
+/* =========================
+   HTML ESCAPE
+========================= */
 
 function escapeHTML(value) {
 
-    const div =
-        document.createElement(
-            "div"
-        );
-
-    div.textContent =
-        value;
-
-    return div.innerHTML;
-
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
-/* =========================================
-   EVENTS
-========================================= */
+/* =========================
+   SOURCE CODE BUTTON
+========================= */
 
-searchBtn.addEventListener(
-    "click",
-    searchGitHub
-);
+function checkSourceLink(link) {
 
+    if (
+        !link.href ||
+        link.getAttribute("href") === "#" ||
+        link.getAttribute("href") === ""
+    ) {
 
-usernameInput.addEventListener(
-    "keydown",
-    event => {
+        alert(
+            "Please add the GitHub repository URL for this project's source code."
+        );
 
-        if (event.key === "Enter") {
-
-            searchGitHub();
-
-        }
-
+        return false;
     }
-);
 
-
-retryBtn.addEventListener(
-    "click",
-    () => {
-
-        if (lastUsername) {
-
-            usernameInput.value =
-                lastUsername;
-
-            searchGitHub();
-
-        } else {
-
-            usernameInput.focus();
-
-        }
-
-    }
-);
+    return true;
+}
